@@ -1,4 +1,5 @@
-From 769c28c6c3fe69436c2a26de2cf9c30a8ca8cbb2 Mon Sep 17 00:00:00 2001
+From 8eae21743b1dd8b4f83feaaa115dae6046e65bf9 Mon Sep 17 00:00:00 2001
+Message-Id: <8eae21743b1dd8b4f83feaaa115dae6046e65bf9.1626397765.git.bobby.eshleman@gmail.com>
 From: Bobby Eshleman <bobby.eshleman@gmail.com>
 Date: Wed, 23 Jun 2021 11:15:45 -0700
 Subject: [PATCH] varstore-sb-state: only load auth data if needed
@@ -8,40 +9,28 @@ user, so only call load_one_auth_data() if varstore-sb-state user is
 called.
 
 This avoids varstore-sb-state ${uuid} setup from attempting to load auth
-files, which it doesn't actually need, and therefore avoids complaints
-if there happens to be a missing auth file.
+files, which it doesn't actually need, and therefore avoids unnecessary
+complaints if there happens to be one or more missing auth files.
 
 Signed-off-by: Bobby Eshleman <bobby.eshleman@gmail.com>
 ---
- tools/varstore-sb-state.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/varstore-sb-state.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/tools/varstore-sb-state.c b/tools/varstore-sb-state.c
-index dc91b2b..914d9f9 100644
+index dc91b2b..6305dd2 100644
 --- a/tools/varstore-sb-state.c
 +++ b/tools/varstore-sb-state.c
-@@ -92,8 +92,6 @@ int main(int argc, char **argv)
+@@ -92,7 +92,8 @@ int main(int argc, char **argv)
      if (opt_socket)
          db->parse_arg("socket", opt_socket);
  
 -    load_auth_data();
--
++    if (!strcmp(argv[optind + 1], "user"))
++        load_auth_data();
+ 
      if (!drop_privileges(opt_chroot, opt_depriv, opt_gid, opt_uid))
          exit(1);
- 
-@@ -110,8 +108,10 @@ int main(int argc, char **argv)
-     printf("Removing dbx...\n");
-     do_rm(&gEfiImageSecurityDatabaseGuid, "dbx");
- 
--    if (!strcmp(argv[optind + 1], "user"))
-+    if (!strcmp(argv[optind + 1], "user")) {
-+        load_auth_data();
-         return setup_keys();
--    else
-+    } else {
-         return 0;
-+    }
- }
 -- 
 2.30.0
 

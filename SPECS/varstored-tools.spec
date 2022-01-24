@@ -1,6 +1,6 @@
 Name:           varstored-tools
-Version:        0.9.1
-Release:        1.2%{?dist}
+Version:        1.0.0
+Release:        1%{?dist}
 Summary:        Variables store for UEFI guests
 License:        BSD
 URL:            https://github.com/xapi-project/varstored
@@ -11,9 +11,6 @@ BuildRequires:  gcc
 BuildRequires:  libxml2-devel
 BuildRequires:  libseccomp-devel
 BuildRequires:  openssl-devel
-
-# XCP-ng patches
-Patch1000: varstored-0.9.1-sb-state-only-load-auth-data-if-needed.backport.patch
 
 %description
 Command-line utilities for varstored/uefistored
@@ -45,6 +42,10 @@ install -m 0755 create-auth %{buildroot}/opt/xensource/libexec/
 /opt/xensource/libexec/create-auth
 
 %changelog
+* Mon Jan 24 2022 Samuel Verschelde <stormi-xcp@ylix.fr> - 1.0.0-1
+- Update to 1.0.0
+- Drop varstored-0.9.1-sb-state-only-load-auth-data-if-needed.XCP-ng.patch merged upstream
+
 * Thu Jul 15 2021 Bobby Eshleman <bobbyeshleman@gmail.com> - 0.9.1-1.2
 - Update varstored-0.9.1-sb-state-only-load-auth-data-if-needed.XCP-ng.patch
 - Updated to upstream version of the patch after PR merge
